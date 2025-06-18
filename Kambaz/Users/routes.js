@@ -85,7 +85,7 @@ export default function UserRoutes(app) {
     res.json(status);
 
   };
-  const findCoursesForEnrolledUser = (req, res) => {
+  const findCoursesForEnrolledUser = async (req, res) => {
     let { userId } = req.params;
     if (userId === "current") {
       const currentUser = req.session["currentUser"];
@@ -95,10 +95,39 @@ export default function UserRoutes(app) {
       }
       userId = currentUser._id;
     }
-    const courses = courseDao.findCoursesForEnrolledUser(userId);
+    const courses = await enrollmentDao.findCoursesForUser(userId);  // Use ENROLLMENTS DAO
     res.json(courses);
   };
-  app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
+  
+
+
+  const enrollUserInCourse = (req, res) => {
+    let { userId, courseId } = req.params;
+    if (userId === "current") {
+      const currentUser = req.session["currentUser"];
+      if (!currentUser) {
+        res.sendStatus(401);
+        return;
+      }
+      userId = currentUser._id;
+    }
+    const enrollment = enrollmentDao.enrollUserInCourse(userId, courseId);
+    res.json(enrollment);
+  };
+  
+  const unEnrollUserFromCourse = (req, res) => {
+    let { userId, courseId } = req.params;
+    if (userId === "current") {
+      const currentUser = req.session["currentUser"];
+      if (!currentUser) {
+        res.sendStatus(401);
+        return;
+      }
+      userId = currentUser._id;
+    }
+    const status = enrollmentDao.unEnrollUserFromCourse(userId, courseId);
+    res.json(status);
+  };
 
   const createUser = async (req, res) => {
     const user = await dao.createUser(req.body);
@@ -114,4 +143,7 @@ export default function UserRoutes(app) {
   app.get("/api/users/:userId", findUserById);
   app.delete("/api/users/:userId", deleteUser);
   app.post("/api/users", createUser);
+  app.post("/api/users/:userId/courses/:courseId", enrollUserInCourse);
+  app.delete("/api/users/:userId/courses/:courseId", unEnrollUserFromCourse);
+  app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
 }

@@ -18,8 +18,8 @@ mongoose.connect(CONNECTION_STRING);
 const app = express();
 app.use(
   cors({
+    origin: process.env.NETLIFY_URL || "http://localhost:5173",
     credentials: true,
-    origin: process.env.NETLIFY_URL || "http://localhost:5173"
   })
 );
 app.use(express.json());
@@ -27,15 +27,14 @@ const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+    secure: process.env.NODE_ENV !== "development",
+  },
 };
 
 if (process.env.NODE_ENV !== "development") {
   sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    domain: process.env.NODE_SERVER_DOMAIN,
-  };
 }
 app.use(session(sessionOptions));
 Lab5(app);

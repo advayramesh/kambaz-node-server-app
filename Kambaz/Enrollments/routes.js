@@ -7,7 +7,7 @@ export default function EnrollmentRoutes(app) {
       const courses = await dao.findCoursesForUser(userId);
       res.json(courses);
     } catch (err) {
-      res.status(500).json({ error: "Failed to fetch enrollments for user" });
+      res.status(500);
     }
   });
 
@@ -17,7 +17,7 @@ export default function EnrollmentRoutes(app) {
       const users = await dao.findUsersForCourse(courseId);
       res.json(users);
     } catch (err) {
-      res.status(500).json({ error: "Failed to fetch users for course" });
+      res.status(500);
     }
   });
 
@@ -28,7 +28,7 @@ export default function EnrollmentRoutes(app) {
       const enrollment = await dao.enrollUserInCourse(userId, courseId);
       res.json(enrollment);
     } catch (err) {
-      res.status(500).json({ error: "Enrollment failed" });
+      res.status(500);
     }
   });
 
@@ -38,7 +38,7 @@ export default function EnrollmentRoutes(app) {
       const result = await dao.unenrollUserFromCourse(userId, courseId);
       res.json(result);
     } catch (err) {
-      res.status(500).json({ error: "Unenrollment failed" });
+      res.status(500);
     }
   });
 }

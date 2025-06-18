@@ -10,7 +10,8 @@ import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import mongoose from "mongoose";
 import EnrollmentRoutes from "./Kambaz/Enrollments/routes.js";
 
-const CONNECTION_STRING = process.env.CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
+const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
+
 mongoose.connect(CONNECTION_STRING);
 //process.env.NETLIFY_URL || "https://a5--phenomenal-sable-ed932d.netlify.app"
 
@@ -18,7 +19,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: process.env.NETLIFY_URL || "http://localhost:5173"
   })
 );
 app.use(express.json());
